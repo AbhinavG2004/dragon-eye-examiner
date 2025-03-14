@@ -44,7 +44,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
                     <div className="w-3 h-3 rounded-full bg-[#e6e13e]"></div>
                   )}
                 </div>
-                <span>{option}</span>
+                <span className="text-[#e6e13e]">{option}</span>
               </div>
             </div>
           ))}
