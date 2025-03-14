@@ -125,7 +125,7 @@ const Exam = () => {
         timeLeft={timeLeft}
       />
 
-      <div className="container mx-auto p-6">
+      <div className="container mx-auto px-4 py-8">
         {isExamSubmitted ? (
           <ExamCompletionCard 
             totalQuestions={questions.length}
@@ -133,7 +133,7 @@ const Exam = () => {
             onReturnHome={handleReturnHome}
           />
         ) : (
-          <div>
+          <div className="fade-in">
             <QuestionCard 
               questionNumber={currentQuestion + 1}
               question={questions[currentQuestion].question}

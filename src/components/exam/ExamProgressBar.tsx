@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Progress } from '@/components/ui/progress';
 
 interface ExamProgressBarProps {
   currentQuestion: number;
@@ -21,19 +22,19 @@ const ExamProgressBar: React.FC<ExamProgressBarProps> = ({
   };
 
   return (
-    <div className="bg-[#0f1623] py-2 px-6 flex items-center justify-between border-b border-gray-800">
-      <div className="flex items-center space-x-2 w-full max-w-xs">
-        <div className="w-full bg-gray-700 rounded-full h-2">
-          <div
-            className="bg-orange-500 h-2 rounded-full"
-            style={{ width: `${progressPercentage}%` }}
-          ></div>
+    <div className="bg-[#0f1623] py-3 px-6 flex items-center justify-between border-b border-gray-800">
+      <div className="flex items-center space-x-3 w-full max-w-xs">
+        <div className="w-full">
+          <Progress 
+            value={progressPercentage} 
+            className="h-2 bg-gray-700"
+          />
         </div>
-        <span className="text-sm text-gray-400">{currentQuestion + 1}/{totalQuestions}</span>
+        <span className="text-sm text-gray-400 min-w-[40px]">{currentQuestion + 1}/{totalQuestions}</span>
       </div>
       <div className="flex items-center">
         <div className="flex items-center text-lg">
-          <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <svg className="w-5 h-5 mr-1 text-[#e6e13e]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <circle cx="12" cy="12" r="10" strokeWidth="2" stroke="currentColor"></circle>
             <path strokeLinecap="round" strokeWidth="2" d="M12 6v6l4 2"></path>
           </svg>

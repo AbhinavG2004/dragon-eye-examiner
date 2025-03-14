@@ -14,10 +14,10 @@ const ExamHeader: React.FC<ExamHeaderProps> = ({
   onCameraError
 }) => {
   return (
-    <header className="bg-[#0f1623] py-3 px-6 flex items-center justify-between border-b border-gray-800">
+    <header className="bg-[#0f1623] py-4 px-6 flex items-center justify-between border-b border-gray-800">
       <div className="flex items-center">
         <h1 className="text-3xl font-bold mr-3 text-[#e6e13e]">Dragon</h1>
-        <span className="bg-[#1e2736] text-sm px-3 py-1 rounded">Proctor</span>
+        <span className="bg-[#1e2736] text-sm px-3 py-1 rounded-md">Proctor</span>
       </div>
       <div className="flex items-center">
         <div className="mr-8 text-right">
@@ -27,7 +27,7 @@ const ExamHeader: React.FC<ExamHeaderProps> = ({
         <div className="relative border-2 border-[#1e2736] rounded-lg w-20 h-20 overflow-hidden">
           <Camera 
             onError={onCameraError} 
-            className="h-full w-full" 
+            className="h-full w-full object-cover" 
           />
         </div>
       </div>
