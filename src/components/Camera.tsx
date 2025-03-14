@@ -17,6 +17,13 @@ const Camera: React.FC<CameraProps> = ({ onError, className = "" }) => {
 
     const startCamera = async () => {
       try {
+        // Clear any existing stream object on the video element
+        if (videoRef.current && videoRef.current.srcObject) {
+          const currentStream = videoRef.current.srcObject as MediaStream;
+          currentStream.getTracks().forEach(track => track.stop());
+          videoRef.current.srcObject = null;
+        }
+        
         stream = await navigator.mediaDevices.getUserMedia({ 
           video: { 
             width: { ideal: 1280 },
@@ -27,8 +34,11 @@ const Camera: React.FC<CameraProps> = ({ onError, className = "" }) => {
         
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
-          setHasPermission(true);
-          setIsCameraActive(true);
+          // Wait for the video to be loaded before setting states
+          videoRef.current.onloadedmetadata = () => {
+            setHasPermission(true);
+            setIsCameraActive(true);
+          };
         }
       } catch (err) {
         console.error("Error accessing camera:", err);
@@ -42,9 +52,13 @@ const Camera: React.FC<CameraProps> = ({ onError, className = "" }) => {
       }
     };
 
-    startCamera();
+    // Add a small delay before starting the camera to ensure DOM is fully loaded
+    const timer = setTimeout(() => {
+      startCamera();
+    }, 500);
 
     return () => {
+      clearTimeout(timer);
       if (stream) {
         stream.getTracks().forEach(track => {
           track.stop();
@@ -54,7 +68,7 @@ const Camera: React.FC<CameraProps> = ({ onError, className = "" }) => {
   }, [onError]);
 
   return (
-    <div className={`camera-container rounded-xl bg-black overflow-hidden ${className}`}>
+    <div className={`camera-container rounded-xl overflow-hidden ${className}`}>
       {hasPermission === false && (
         <div className="camera-overlay flex flex-col gap-2 p-4 text-white">
           <span className="text-lg font-medium">Camera Access Required</span>
@@ -73,6 +87,14 @@ const Camera: React.FC<CameraProps> = ({ onError, className = "" }) => {
         muted 
         className={`w-full h-full object-cover ${!isCameraActive && 'opacity-0'}`}
       />
+      <div className="absolute top-2 right-2 flex items-center">
+        {!isCameraActive && (
+          <span className="inline-flex items-center text-xs bg-red-500 text-white px-2 py-0.5 rounded-full">
+            <span className="w-2 h-2 bg-white rounded-full mr-1 animate-pulse"></span>
+            inactive
+          </span>
+        )}
+      </div>
     </div>
   );
 };

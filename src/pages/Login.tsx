@@ -5,6 +5,8 @@ import { toast } from '@/hooks/use-toast';
 import Camera from '@/components/Camera';
 
 const Login = () => {
+  const [fullName, setFullName] = useState('');
+  const [registrationNumber, setRegistrationNumber] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -13,6 +15,22 @@ const Login = () => {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    
+    // Clear previous errors
+    setError('');
+    
+    // Validate inputs
+    if (!fullName.trim()) {
+      setError('Please enter your full name');
+      setIsLoading(false);
+      return;
+    }
+    
+    if (!registrationNumber.trim()) {
+      setError('Please enter your registration number');
+      setIsLoading(false);
+      return;
+    }
     
     // Simulate API call with timeout
     setTimeout(() => {
@@ -39,52 +57,121 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6">
-      <div className="w-full max-w-md px-6 py-8 bg-white/90 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-100 animate-fade-in">
-        <div className="text-center mb-8 animate-slide-down">
-          <h1 className="text-3xl font-semibold mb-2">Dragon Proctoring System</h1>
-          <p className="text-muted-foreground">Secure exam monitoring for academic integrity</p>
+    <div className="min-h-screen flex bg-[#111827] text-white">
+      {/* Left Section - Login Form */}
+      <div className="w-full lg:w-1/2 p-8 flex flex-col">
+        <div className="text-center my-8">
+          <h1 className="text-4xl font-bold text-[#e6e13e]">Dragon</h1>
         </div>
         
-        <div className="mb-8">
-          <Camera 
-            onError={handleCameraError} 
-            className="h-[200px] w-full rounded-xl mb-4 shadow-sm animate-fade-in" 
-          />
-          <p className="text-sm text-muted-foreground text-center">
-            Your camera feed is required for exam proctoring.
+        <div className="max-w-md mx-auto w-full mt-12">
+          <h2 className="text-2xl font-semibold mb-2">Exam Proctoring System</h2>
+          <p className="text-gray-400 mb-8">Enter your details to continue</p>
+          
+          <div className="bg-[#1e2736]/50 rounded-lg p-6 backdrop-blur-sm">
+            <h3 className="text-xl font-medium mb-1">Login</h3>
+            <p className="text-sm text-gray-400 mb-6">Access your examination portal</p>
+            
+            <form onSubmit={handleLogin} className="space-y-5">
+              <div className="space-y-1">
+                <label htmlFor="fullName" className="text-sm">
+                  Your Name
+                </label>
+                <input
+                  id="fullName"
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="w-full bg-[#1a202c] border border-gray-700 rounded p-2.5 text-white focus:border-[#e6e13e] focus:outline-none transition-all"
+                  placeholder="Enter your full name"
+                />
+              </div>
+              
+              <div className="space-y-1">
+                <label htmlFor="registrationNumber" className="text-sm">
+                  Registration Number
+                </label>
+                <input
+                  id="registrationNumber"
+                  type="text"
+                  value={registrationNumber}
+                  onChange={(e) => setRegistrationNumber(e.target.value)}
+                  className="w-full bg-[#1a202c] border border-gray-700 rounded p-2.5 text-white focus:border-[#e6e13e] focus:outline-none transition-all"
+                  placeholder="Enter your registration number"
+                />
+              </div>
+              
+              <div className="space-y-1">
+                <label htmlFor="password" className="text-sm">
+                  Password
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full bg-[#1a202c] border border-gray-700 rounded p-2.5 text-white focus:border-[#e6e13e] focus:outline-none transition-all"
+                  placeholder="Enter your password"
+                />
+              </div>
+              
+              {error && <p className="text-sm text-red-400">{error}</p>}
+              
+              <button 
+                type="submit" 
+                className="w-full bg-[#e6e13e] hover:bg-[#c4c034] text-black font-medium py-2.5 px-4 rounded transition-colors duration-200"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Processing...' : 'Continue to Exam'}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+      
+      {/* Right Section - Camera & Instructions */}
+      <div className="hidden lg:block w-1/2 bg-[#0f1623] p-10">
+        <div className="h-full flex flex-col">
+          <h3 className="text-xl font-medium mb-4">Proctor Instructions</h3>
+          <p className="text-gray-400 mb-6">
+            Ensure your camera is working properly before starting the exam. Your session will be monitored.
           </p>
-        </div>
-        
-        <form onSubmit={handleLogin} className="space-y-6 animate-slide-up">
-          <div className="space-y-2">
-            <label htmlFor="password" className="text-sm font-medium">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="auth-input"
-              placeholder="Enter password"
-              autoComplete="current-password"
-              required
+          
+          <div className="mb-8 relative border-4 border-[#1e2736] rounded-lg overflow-hidden">
+            <Camera 
+              onError={handleCameraError} 
+              className="h-[320px] w-full" 
             />
-            {error && <p className="text-sm text-destructive mt-1">{error}</p>}
+            <div className="absolute top-2 right-2 flex items-center">
+              <span className="inline-flex items-center text-xs bg-red-500 text-white px-2 py-0.5 rounded-full">
+                <span className="w-2 h-2 bg-white rounded-full mr-1 animate-pulse"></span>
+                inactive
+              </span>
+            </div>
           </div>
           
-          <button 
-            type="submit" 
-            className="btn-primary w-full flex items-center justify-center"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <span className="inline-block w-5 h-5 border-2 border-t-primary-foreground rounded-full animate-spin mr-2"></span>
-            ) : null}
-            {isLoading ? 'Authenticating...' : 'Continue to Exam'}
-          </button>
-        </form>
+          <div className="mt-auto">
+            <h3 className="text-lg font-medium mb-4">Exam Guidelines</h3>
+            <ul className="space-y-3 text-gray-300">
+              <li className="flex items-start">
+                <span className="text-[#e6e13e] mr-2">•</span>
+                <span>Ensure you're in a well-lit, quiet environment</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#e6e13e] mr-2">•</span>
+                <span>Keep your face visible in the camera throughout</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#e6e13e] mr-2">•</span>
+                <span>No additional devices or people allowed in the room</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#e6e13e] mr-2">•</span>
+                <span>No browsing other tabs during the examination</span>
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   );

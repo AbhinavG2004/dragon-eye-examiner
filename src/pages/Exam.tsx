@@ -8,12 +8,12 @@ import Camera from '@/components/Camera';
 const questions = [
   {
     id: 1,
-    question: "What is the primary purpose of a proctoring system?",
+    question: "Which of the following is a characteristic of a secure proctoring system?",
     options: [
-      "To increase exam difficulty",
-      "To monitor students during exams",
-      "To grade exams automatically",
-      "To prepare exam content"
+      "Recording the screen without student's consent",
+      "Continuous identity verification during the exam",
+      "Allowing unlimited access to external resources",
+      "Disabling computer functionality completely"
     ],
     correctAnswer: 1
   },
@@ -38,36 +38,16 @@ const questions = [
       "The security protocol used"
     ],
     correctAnswer: 1
-  },
-  {
-    id: 4,
-    question: "Which technology is essential for video proctoring?",
-    options: [
-      "Keyboard",
-      "Camera",
-      "Printer",
-      "Speaker"
-    ],
-    correctAnswer: 1
-  },
-  {
-    id: 5,
-    question: "What action might be flagged as suspicious during an exam?",
-    options: [
-      "Looking at the screen",
-      "Typing answers",
-      "Looking away frequently",
-      "Sitting still"
-    ],
-    correctAnswer: 2
   }
 ];
 
 const Exam = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<number[]>(Array(questions.length).fill(-1));
-  const [timeLeft, setTimeLeft] = useState(600); // 10 minutes in seconds
+  const [timeLeft, setTimeLeft] = useState(1800); // 30 minutes in seconds
   const [isExamSubmitted, setIsExamSubmitted] = useState(false);
+  const [studentName] = useState("ABHINAV");
+  const [studentId] = useState("RA2211003011638");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -128,123 +108,137 @@ const Exam = () => {
     return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const progressPercentage = ((currentQuestion + 1) / questions.length) * 100;
+
   return (
-    <div className="min-h-screen flex flex-col p-4 sm:p-6">
-      <div className="container mx-auto max-w-5xl">
-        <header className="mb-6 flex flex-col sm:flex-row items-center justify-between">
-          <h1 className="text-2xl font-semibold mb-4 sm:mb-0">Dragon Proctoring System</h1>
-          <div className="flex items-center gap-4">
-            <div className="px-4 py-2 bg-secondary rounded-lg">
-              <span className="font-medium">Time Left: </span>
-              <span className={`font-mono ${timeLeft < 60 ? 'text-destructive' : ''}`}>
-                {formatTime(timeLeft)}
-              </span>
-            </div>
-            <button 
-              onClick={handleSubmitExam} 
-              disabled={isExamSubmitted}
-              className="btn-primary"
-            >
-              Submit Exam
-            </button>
+    <div className="min-h-screen bg-[#111827] text-white">
+      {/* Header */}
+      <header className="bg-[#0f1623] py-3 px-6 flex items-center justify-between border-b border-gray-800">
+        <div className="flex items-center">
+          <h1 className="text-3xl font-bold mr-3 text-[#e6e13e]">Dragon</h1>
+          <span className="bg-[#1e2736] text-sm px-3 py-1 rounded">Proctor</span>
+        </div>
+        <div className="flex items-center">
+          <div className="mr-8 text-right">
+            <p className="font-medium">{studentName}</p>
+            <p className="text-xs text-gray-400">ID: {studentId}</p>
           </div>
-        </header>
-
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Main content area with questions */}
-          <div className="lg:col-span-3 glass-card rounded-xl p-6 animate-fade-in">
-            {isExamSubmitted ? (
-              <div className="text-center py-12 space-y-6 animate-fade-in">
-                <h2 className="text-2xl font-semibold">Exam Completed</h2>
-                <p className="text-muted-foreground">Thank you for completing the exam.</p>
-                <p>
-                  You answered {selectedAnswers.filter(a => a !== -1).length} out of {questions.length} questions.
-                </p>
-                <button 
-                  onClick={() => navigate('/')} 
-                  className="btn-primary mt-6"
-                >
-                  Return to Home
-                </button>
-              </div>
-            ) : (
-              <>
-                <div className="mb-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-medium">Question {currentQuestion + 1} of {questions.length}</h3>
-                    <span className="text-sm bg-secondary px-3 py-1 rounded-full">
-                      {selectedAnswers[currentQuestion] !== -1 ? 'Answered' : 'Unanswered'}
-                    </span>
-                  </div>
-                  <p className="text-xl mb-6">{questions[currentQuestion].question}</p>
-                  
-                  <div className="space-y-3">
-                    {questions[currentQuestion].options.map((option, index) => (
-                      <div 
-                        key={index}
-                        onClick={() => handleAnswerSelect(index)}
-                        className={`p-4 border rounded-lg cursor-pointer transition-all hover:border-primary ${
-                          selectedAnswers[currentQuestion] === index ? 'border-primary bg-primary/5' : 'border-gray-200'
-                        }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${
-                            selectedAnswers[currentQuestion] === index ? 'border-primary' : 'border-gray-300'
-                          }`}>
-                            {selectedAnswers[currentQuestion] === index && (
-                              <div className="w-3 h-3 rounded-full bg-primary"></div>
-                            )}
-                          </div>
-                          <span>{option}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex justify-between mt-8">
-                  <button 
-                    onClick={handlePrevQuestion} 
-                    disabled={currentQuestion === 0}
-                    className={`px-4 py-2 rounded border ${
-                      currentQuestion === 0 
-                        ? 'opacity-50 cursor-not-allowed border-gray-200' 
-                        : 'border-gray-300 hover:border-primary'
-                    }`}
-                  >
-                    Previous
-                  </button>
-                  <button 
-                    onClick={handleNextQuestion} 
-                    disabled={currentQuestion === questions.length - 1}
-                    className={`px-4 py-2 rounded border ${
-                      currentQuestion === questions.length - 1 
-                        ? 'opacity-50 cursor-not-allowed border-gray-200' 
-                        : 'border-gray-300 hover:border-primary'
-                    }`}
-                  >
-                    Next
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-
-          {/* Camera sidebar */}
-          <div className="glass-card rounded-xl p-4 space-y-4 animate-fade-in">
-            <h3 className="text-lg font-medium text-center">Proctoring Camera</h3>
+          <div className="relative border-2 border-[#1e2736] rounded-lg w-20 h-20 overflow-hidden">
             <Camera 
               onError={handleCameraError} 
-              className="h-[220px] w-full rounded-lg" 
+              className="h-full w-full" 
             />
-            <div className="space-y-2 text-sm text-muted-foreground pt-2 border-t">
-              <p>• Ensure your face is clearly visible</p>
-              <p>• Stay within camera view</p>
-              <p>• Good lighting is recommended</p>
-              <p>• Avoid suspicious movements</p>
+            <div className="absolute top-1 left-1 flex items-center">
+              <span className="inline-flex items-center text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded-full">
+                <span className="w-1.5 h-1.5 bg-white rounded-full mr-0.5 animate-pulse"></span>
+                inactive
+              </span>
             </div>
           </div>
         </div>
+      </header>
+
+      {/* Progress Bar */}
+      <div className="bg-[#0f1623] py-2 px-6 flex items-center justify-between border-b border-gray-800">
+        <div className="flex items-center space-x-2 w-full max-w-xs">
+          <div className="w-full bg-gray-700 rounded-full h-2">
+            <div
+              className="bg-orange-500 h-2 rounded-full"
+              style={{ width: `${progressPercentage}%` }}
+            ></div>
+          </div>
+          <span className="text-sm text-gray-400">{currentQuestion + 1}/{questions.length}</span>
+        </div>
+        <div className="flex items-center">
+          <div className="flex items-center text-lg">
+            <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10" strokeWidth="2" stroke="currentColor"></circle>
+              <path strokeLinecap="round" strokeWidth="2" d="M12 6v6l4 2"></path>
+            </svg>
+            <span>{formatTime(timeLeft)}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Main content */}
+      <div className="container mx-auto p-6">
+        {isExamSubmitted ? (
+          <div className="bg-[#1e2736]/60 rounded-xl p-10 text-center max-w-2xl mx-auto mt-20">
+            <h2 className="text-2xl font-bold mb-4">Exam Completed</h2>
+            <p className="text-gray-300 mb-6">Thank you for completing the exam.</p>
+            <p className="text-xl mb-8">
+              You answered {selectedAnswers.filter(a => a !== -1).length} out of {questions.length} questions.
+            </p>
+            <button 
+              onClick={() => navigate('/')} 
+              className="bg-[#e6e13e] hover:bg-[#c4c034] text-black font-medium py-2.5 px-8 rounded transition-colors duration-200"
+            >
+              Return to Home
+            </button>
+          </div>
+        ) : (
+          <div className="bg-[#1e2736]/60 rounded-xl p-8 backdrop-blur-sm max-w-4xl mx-auto">
+            <p className="text-sm text-gray-400 mb-2">Question {currentQuestion + 1}</p>
+            <h2 className="text-2xl font-medium mb-8">{questions[currentQuestion].question}</h2>
+            
+            <div className="space-y-4 mb-10">
+              {questions[currentQuestion].options.map((option, index) => (
+                <div 
+                  key={index}
+                  onClick={() => handleAnswerSelect(index)}
+                  className={`p-4 rounded-lg cursor-pointer transition-colors ${
+                    selectedAnswers[currentQuestion] === index 
+                      ? 'bg-[#2d3748] border border-[#e6e13e]/30' 
+                      : 'bg-[#1a202c] hover:bg-[#2d3748]/70'
+                  }`}
+                >
+                  <div className="flex items-center">
+                    <div className={`w-6 h-6 flex-shrink-0 rounded-full border flex items-center justify-center mr-3 ${
+                      selectedAnswers[currentQuestion] === index 
+                        ? 'border-[#e6e13e]' 
+                        : 'border-gray-600'
+                    }`}>
+                      {selectedAnswers[currentQuestion] === index && (
+                        <div className="w-3 h-3 rounded-full bg-[#e6e13e]"></div>
+                      )}
+                    </div>
+                    <span>{option}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex justify-between mt-8">
+              <button 
+                onClick={handlePrevQuestion} 
+                disabled={currentQuestion === 0}
+                className={`px-6 py-2 rounded border ${
+                  currentQuestion === 0 
+                    ? 'opacity-50 cursor-not-allowed border-gray-700 text-gray-500' 
+                    : 'border-gray-600 hover:border-gray-400'
+                }`}
+              >
+                Previous
+              </button>
+              
+              {currentQuestion === questions.length - 1 ? (
+                <button 
+                  onClick={handleSubmitExam}
+                  className="bg-[#e6e13e] hover:bg-[#c4c034] text-black font-medium py-2 px-6 rounded transition-colors duration-200"
+                >
+                  Submit Exam
+                </button>
+              ) : (
+                <button 
+                  onClick={handleNextQuestion}
+                  className="px-6 py-2 rounded border border-gray-600 hover:border-gray-400"
+                >
+                  Next
+                </button>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
